@@ -1,4 +1,5 @@
 import requests
+import pygame
 
 
 class Map:
@@ -24,6 +25,7 @@ class Map:
         self.params = {"size": f"{self.size[0]},{self.size[1]}", "l": self.layer, "z": self.z,
                        "ll": f"{self.ll[0]},{self.ll[1]}"}
         self.spn = 180 / 2 ** self.z  # переменная для дальнейших вычислений
+        self.pts = []  # все точки
 
     def change_size(self, new_size) -> None:
         """
@@ -69,3 +71,91 @@ class Map:
         map_file = file_path
         with open(map_file, "wb") as file:
             file.write(response.content)
+
+    def make_pts_param(self) -> None:
+        """
+        Делает параметр pt и pl
+        создает кривую-путь, отмечая точку начала и конца
+        Если переменная self.pts - пустая, то ничего не происходит
+        """
+        if not self.pts:
+            return
+
+        self.params["pt"] = f"{self.pts[0][0]},{self.pts[0][1]},pm2am"
+        # Точка с буквой A в начале
+
+        if len(self.pts) > 1:
+            self.params["pt"] += f"~{self.pts[-1][0]},{self.pts[-1][1]},pm2bm"
+            # Точка с буквой B в конце
+
+        for i, pt in enumerate(self.pts):
+            if i == 0:
+                self.params["pl"] = f"{pt[0]},{pt[1]}"
+            else:
+                self.params["pl"] += f",{pt[0]},{pt[1]}"
+
+    def place_point(self, x, y) -> None:
+        """
+        Ставит точку на карте, соответствующую x и y. Не ставит ничего,
+        если уровень масштабирования меньше 7 (слишком большой масштаб)
+        Также есть проверка на допустимое значение долготы и широты -
+        -180 <= ll[0] <= 180 and -90 <= ll[1] <= 90
+        :param x: x точки
+        :param y: y точки
+        """
+        if self.z <= 7:
+            return
+
+        left_up = [self.ll[0] - self.spn * 2.555, self.ll[1] + self.spn * .96]
+        # Долгота и широта левого верхнего угла
+        right_bottom = [self.ll[0] + self.spn * 2.539, self.ll[1] - self.spn * .99]
+        # Долгота и широта правого нижнего угла
+
+        # Коэффициенты были получены лично мной, спустя очень долгое время подбора
+        # Вроде это самый масштабируемый способ поставить точку по координатам x и y
+
+        px_val = [(right_bottom[0] - left_up[0]) / 650,
+                  (left_up[1] -
+                   right_bottom[1]) / 450]
+        # сколько градусов широты, долготы в 1 пикселе
+
+        pos = [x,
+               self.size[1] - y]
+        # Делает так, чтобы x и y возрастали так же, как долгота и широта -
+        # долгота возрастает, как и x, слева вправо, а широта - снизу вверх
+
+        point_ll = [pos[0] * px_val[0] + left_up[0], pos[1] * px_val[1] + right_bottom[1]]
+
+        if abs(point_ll[0]) > 180 or abs(point_ll[1]) > 90:
+            return
+        self.pts.append(point_ll)
+        self.make_pts_param()
+
+
+pygame.init()
+screen = pygame.display.set_mode((650, 450))
+# Рисуем картинку, загружаемую из только что созданного файла.
+card = Map()
+screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+pygame.display.flip()
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                mouse = pygame.mouse.get_pos()
+                card.place_point(mouse[0], mouse[1])
+                card.request_map()
+                print('a')
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
+
+            # elif event.button == 4:
+            #     z += 1 if z <= 20 else 0
+            #     change_card(params)
+            # elif event.button == 5:
+            #     z -= 1 if z > 2 else 0
+            #     change_card(params)
+pygame.quit()
