@@ -51,3 +51,21 @@ class Map:
         """
         self.layer = new_layer
         self.params["l"] = self.layer
+
+    def request_map(self, file_path='static/img/map.png') -> None:
+        """
+        Запрашивает изображение карты и сохраняет его в file
+        Выводит на экран ошибку, если возникла проблема с запросом
+        :param file_path: относительный путь до файла, куда нужно сохранить изображение карты
+        """
+        link = "https://static-maps.yandex.ru/1.x/"
+        response = requests.get(link, params=self.params)
+        if not response:
+            print("Ошибка выполнения запроса:")
+            print(f"Параметры: {self.params}")
+            print(f"Ссылка: {link}")
+            print("Http статус:", response.status_code, "(", response.reason, ")")
+            return
+        map_file = file_path
+        with open(map_file, "wb") as file:
+            file.write(response.content)
