@@ -1,5 +1,4 @@
 import requests
-import pygame
 
 
 class Map:
@@ -186,60 +185,62 @@ class Map:
             self.pts.pop()
             self.make_pts_param()
 
+# Ниже визуализатор работы класса на pygame
 
-pygame.init()
-screen = pygame.display.set_mode((650, 450))
-# Рисуем картинку, загружаемую из только что созданного файла.
-card = Map()
-card.request_map()
-screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-pygame.display.flip()
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                mouse = pygame.mouse.get_pos()
-                card.place_point(mouse[0], mouse[1])
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-            elif event.button == 4:
-                card.change_z(card.z + 1)
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-            elif event.button == 5:
-                card.change_z(card.z - 1)
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                card.move("left")
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-            elif event.key == pygame.K_UP:
-                card.move("up")
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-            elif event.key == pygame.K_RIGHT:
-                card.move("right")
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-            elif event.key == pygame.K_DOWN:
-                card.move("down")
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-            elif event.key == pygame.K_BACKSPACE:
-                card.undo()
-                card.request_map()
-                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
-                pygame.display.flip()
-pygame.quit()
+# import pygame
+# pygame.init()
+# screen = pygame.display.set_mode((650, 450))
+# # Рисуем картинку, загружаемую из только что созданного файла.
+# card = Map()
+# card.request_map()
+# screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+# pygame.display.flip()
+# running = True
+# while running:
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             running = False
+#         if event.type == pygame.MOUSEBUTTONDOWN:
+#             if event.button == 1:
+#                 mouse = pygame.mouse.get_pos()
+#                 card.place_point(mouse[0], mouse[1])
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+#             elif event.button == 4:
+#                 card.change_z(card.z + 1)
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+#             elif event.button == 5:
+#                 card.change_z(card.z - 1)
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+#         if event.type == pygame.KEYDOWN:
+#             if event.key == pygame.K_LEFT:
+#                 card.move("left")
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+#             elif event.key == pygame.K_UP:
+#                 card.move("up")
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+#             elif event.key == pygame.K_RIGHT:
+#                 card.move("right")
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+#             elif event.key == pygame.K_DOWN:
+#                 card.move("down")
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+#             elif event.key == pygame.K_BACKSPACE:
+#                 card.undo()
+#                 card.request_map()
+#                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+#                 pygame.display.flip()
+# pygame.quit()
