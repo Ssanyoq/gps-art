@@ -24,7 +24,10 @@ class Map:
         self.size = size
         self.params = {"size": f"{self.size[0]},{self.size[1]}", "l": self.layer, "z": self.z,
                        "ll": f"{self.ll[0]},{self.ll[1]}"}
-        self.spn = 180 / 2 ** self.z  # переменная для дальнейших вычислений
+        self.spn = 180 / 2 ** self.z
+        # Переменная для дальнейших вычислений
+        # Вычислена мной, почему-то работает
+
         self.pts = []  # все точки
 
     def change_size(self, new_size) -> None:
@@ -76,7 +79,9 @@ class Map:
         """
         Делает параметр pt и pl
         создает кривую-путь, отмечая точку начала и конца
-        Если переменная self.pts - пустая, то ничего не происходит
+        Если переменная self.pts пустая, то ничего не происходит
+        Если переменная self.pts содержит только 1 точку, то ставится
+        только точка A
         """
         if not self.pts:
             return
@@ -87,7 +92,8 @@ class Map:
         if len(self.pts) > 1:
             self.params["pt"] += f"~{self.pts[-1][0]},{self.pts[-1][1]},pm2bm"
             # Точка с буквой B в конце
-
+        else:
+            return
         for i, pt in enumerate(self.pts):
             if i == 0:
                 self.params["pl"] = f"{pt[0]},{pt[1]}"
@@ -131,11 +137,21 @@ class Map:
         self.pts.append(point_ll)
         self.make_pts_param()
 
+    def change_z(self, z) -> None:
+        """
+        Меняет значение z
+        :param z: новое значение z
+        """
+        self.z = z
+        self.params["z"] = z
+        self.spn = 180 / 2 ** self.z
+
 
 pygame.init()
 screen = pygame.display.set_mode((650, 450))
 # Рисуем картинку, загружаемую из только что созданного файла.
 card = Map()
+card.request_map()
 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
 pygame.display.flip()
 running = True
@@ -151,11 +167,14 @@ while running:
                 print('a')
                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
                 pygame.display.flip()
-
-            # elif event.button == 4:
-            #     z += 1 if z <= 20 else 0
-            #     change_card(params)
-            # elif event.button == 5:
-            #     z -= 1 if z > 2 else 0
-            #     change_card(params)
+            elif event.button == 4:
+                card.change_z(card.z + 1)
+                card.request_map()
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
+            elif event.button == 5:
+                card.change_z(card.z - 1)
+                card.request_map()
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
 pygame.quit()
