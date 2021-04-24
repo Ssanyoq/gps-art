@@ -146,6 +146,34 @@ class Map:
         self.params["z"] = z
         self.spn = 180 / 2 ** self.z
 
+    def move(self, direction):
+        """
+        Изменяет центр карты на 1/2 self.spn
+        :param direction: равно "up","down","left" или "right"
+        Не будет двигать карту, если после передвижения край
+        карты примет недопустимые значения долготы или широты -
+        -180 <= ll[0] <= 180 and -90 <= ll[1] <= 90
+        """
+        change = self.spn / 2
+        new_ll = self.ll[:]
+        if direction == "up":
+            new_ll[1] += change
+        elif direction == "down":
+            new_ll[1] -= change
+        elif direction == "right":
+            new_ll[0] += change
+        elif direction == "left":
+            new_ll[0] -= change
+        else:
+            return
+
+        if abs(new_ll[0]) > 180 or abs(new_ll[1]) > 90:
+            # TODO доделать
+            return
+
+        self.ll = new_ll
+        self.params["ll"] = f'{self.ll[0]},{self.ll[1]}'
+
 
 pygame.init()
 screen = pygame.display.set_mode((650, 450))
@@ -177,4 +205,27 @@ while running:
                 card.request_map()
                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
                 pygame.display.flip()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                card.move("left")
+                card.request_map()
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
+            elif event.key == pygame.K_UP:
+                card.move("up")
+                card.request_map()
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
+            elif event.key == pygame.K_RIGHT:
+                card.move("right")
+                card.request_map()
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
+            elif event.key == pygame.K_DOWN:
+                card.move("down")
+                card.request_map()
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
+            elif event.key == pygame.K_BACKSPACE:
+                pass
 pygame.quit()
