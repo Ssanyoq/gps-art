@@ -2,6 +2,7 @@ from flask import Flask
 from data import db_session
 from data.users import User
 from data.routes import Route
+from maps_handler import Map
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
