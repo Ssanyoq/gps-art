@@ -84,6 +84,8 @@ class Map:
         только точка A
         """
         if not self.pts:
+            if "pt" in self.params.keys():
+                self.params.pop("pt")
             return
 
         self.params["pt"] = f"{self.pts[0][0]},{self.pts[0][1]},pm2am"
@@ -93,6 +95,8 @@ class Map:
             self.params["pt"] += f"~{self.pts[-1][0]},{self.pts[-1][1]},pm2bm"
             # Точка с буквой B в конце
         else:
+            if "pl" in self.params.keys():
+                self.params.pop("pl")
             return
         for i, pt in enumerate(self.pts):
             if i == 0:
@@ -146,7 +150,7 @@ class Map:
         self.params["z"] = z
         self.spn = 180 / 2 ** self.z
 
-    def move(self, direction):
+    def move(self, direction) -> None:
         """
         Изменяет центр карты на 1/2 self.spn
         :param direction: равно "up","down","left" или "right"
@@ -174,6 +178,14 @@ class Map:
         self.ll = new_ll
         self.params["ll"] = f'{self.ll[0]},{self.ll[1]}'
 
+    def undo(self) -> None:
+        """
+        Удаляет последнюю точку
+        """
+        if self.pts:
+            self.pts.pop()
+            self.make_pts_param()
+
 
 pygame.init()
 screen = pygame.display.set_mode((650, 450))
@@ -192,7 +204,6 @@ while running:
                 mouse = pygame.mouse.get_pos()
                 card.place_point(mouse[0], mouse[1])
                 card.request_map()
-                print('a')
                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
                 pygame.display.flip()
             elif event.button == 4:
@@ -227,5 +238,8 @@ while running:
                 screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
                 pygame.display.flip()
             elif event.key == pygame.K_BACKSPACE:
-                pass
+                card.undo()
+                card.request_map()
+                screen.blit(pygame.image.load("static/img/map.png"), (0, 0))
+                pygame.display.flip()
 pygame.quit()
