@@ -1,0 +1,13 @@
+#map {user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    position: absolute;
+    left: 140px;
+    top: 150px;
+}
+body {
+    background-color: rgb(143, 184, 218);
+}

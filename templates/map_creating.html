@@ -1,42 +1,65 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+  <script type=text/javascript src="{{
+  url_for('static', filename='jquery.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <link rel="stylesheet" href="css/map.css">
+</head>
+
 <body>
+  <div id="demo"></div>
+  <div id="demo1"></div>
+  <img src={{img}} id="map" alt="Карты не нашлось :(">
 
-<h1>My First Web Page</h1>
-<p>My First Paragraph</p>
-<div id="demo"></div>
-<script>
 
-(function() {
-    document.onmousemove = handleMouseMove;
-    function handleMouseMove(event) {
+  <script>
+    let mouse_x = null, mouse_y = null;
+    (function () {
+      document.onmousemove = handleMouseMove;
+      function handleMouseMove(event) {
         var eventDoc, doc, body;
 
-        event = event || window.event; // IE-ism
+        event = event || window.event;
 
-        // If pageX/Y aren't available and clientX/Y are,
-        // calculate pageX/Y - logic taken from jQuery.
-        // (This is to support old IE)
         if (event.pageX == null && event.clientX != null) {
-            eventDoc = (event.target && event.target.ownerDocument) || document;
-            doc = eventDoc.documentElement;
-            body = eventDoc.body;
+          eventDoc = (event.target && event.target.ownerDocument) || document;
+          doc = eventDoc.documentElement;
+          body = eventDoc.body;
 
-            event.pageX = event.clientX +
-              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-              (doc && doc.clientLeft || body && body.clientLeft || 0);
-            event.pageY = event.clientY +
-              (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-              (doc && doc.clientTop  || body && body.clientTop  || 0 );
+          event.pageX = event.clientX +
+            (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+            (doc && doc.clientLeft || body && body.clientLeft || 0);
+          event.pageY = event.clientY +
+            (doc && doc.scrollTop || body && body.scrollTop || 0) -
+            (doc && doc.clientTop || body && body.clientTop || 0);
         }
 
         // Use event.pageX / event.pageY here
-        document.getElementById("demo").innerHTML = event.pageX;
-    }
-})();
+        mouse_x = event.pageX;
+        mouse_y = event.pageY;
+
+      }
+    })();
+    $("#map").click(function () {
+      document.getElementById("demo").innerHTML = mouse_x;
+      // document.getElementById("demo1").innerHTML = mouse_y;
+      $.ajax({
+        type: 'POST',
+        url: "/_map",
+        data: { mouse_x: mouse_x, mouse_y: mouse_y },
+        dataType: "text",
+        success: function (img) {
+          alert("Deleted Student ID " + img.toString());
+          document.getElementById("map").src = img;
+          document.getElementById("demo1").innerHTML = img;
+        }
+      });
+    });
 
 
-</script>
-
+  </script>
 </body>
+
 </html>

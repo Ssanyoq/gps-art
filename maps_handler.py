@@ -185,9 +185,11 @@ class Map:
             self.pts.pop()
             self.make_pts_param()
 
+
 # Ниже визуализатор работы класса на pygame
 
 # import pygame
+#
 # pygame.init()
 # screen = pygame.display.set_mode((650, 450))
 # # Рисуем картинку, загружаемую из только что созданного файла.
