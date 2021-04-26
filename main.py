@@ -2,18 +2,15 @@ from flask import Flask, render_template, request, jsonify
 from data import db_session
 from data.users import User
 from data.routes import Route
+from maps_handler import Map
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-
-
-@app.route("/index")
-def index():
-    param = {"img": "../static/img/map.png"}
-    return render_template("map_creating.html", **param)
+test_map = Map()
 
 
 @app.route("/map")
+@app.route("/")
 def map():
     return render_template("map_creating.html", img="../static/img/map.png")
 
@@ -22,8 +19,7 @@ def map():
 def _map():
     mouse_x = request.form.get("mouse_x")
     mouse_y = request.form.get("mouse_y")
-    print(mouse_x)
-    print(mouse_y)
+    print(mouse_y, mouse_x)
     return "../static/img/right_arrow.png"
 
 
