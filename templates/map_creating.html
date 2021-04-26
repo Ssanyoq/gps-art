@@ -3,6 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <title>Gps art - map creating</title>
   <script type=text/javascript src="{{
   url_for('static', filename='jquery.js') }}"></script>
@@ -11,9 +16,9 @@
 </head>
 
 <body>
-
-  <div id="demo"></div>
-  <div id="demo1"></div>
+  <div class="path_namer">
+    <input type="text" class="form-control" placeholder="Name your path">
+  </div>
   <img src={{img}} id="map" alt="Карты не нашлось :(">
 
 
@@ -46,8 +51,6 @@
       }
     })();
     $("#map").click(function () {
-      document.getElementById("demo").innerHTML = mouse_x;
-      document.getElementById("demo1").innerHTML = mouse_y;
       $.ajax({
         type: 'POST',
         url: "/_map",
@@ -58,7 +61,6 @@
         }
       });
     });
-
 
   </script>
 </body>
