@@ -72,6 +72,7 @@
                 type: 'POST',
                 url: "/_map",
                 data: {
+                    req_type: "place",
                     mouse_x: mouse_x,
                     mouse_y: mouse_y
                 },
@@ -82,7 +83,18 @@
             });
         });
         $(".arrow").click(function(event) {
-            alert(event.target.id.toString());
+            $.ajax({
+                type: 'POST',
+                url: "/_map",
+                data: {
+                    req_type: "move",
+                    direction: event.target.id.toString()
+                },
+                dataType: "text",
+                success: function(img_path) {
+                    document.getElementById("map").src = img_path;
+                }
+            });
         })
     </script>
 </body>

@@ -26,10 +26,19 @@ def map():
 
 @app.route("/_map", methods=["POST"])
 def _map():
-    mouse_x = request.form.get("mouse_x")
-    mouse_y = request.form.get("mouse_y")
+    req = request.form.get("req_type")
+    if req == "place":
+        mouse_x = request.form.get("mouse_x")
+        mouse_y = request.form.get("mouse_y")
+        users_maps["admin"].place_point(int(mouse_x) - 140, int(mouse_y) - 150)
+
+    elif req == "move":
+        direction = request.form.get("direction")
+        directions = direction.split("-")  # Ведь есть направления типа "right-up"
+        for d in directions:
+            users_maps["admin"].move(d)
+
     img_num = time.time_ns()
-    users_maps["admin"].place_point(int(mouse_x) - 140, int(mouse_y) - 150)
     cur_map = "static/img/users_maps/map-123-" + str(img_num)[4:] + ".png"
     users_maps["admin"].request_map(cur_map)
     if users_img_stack["admin"]:
