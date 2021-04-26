@@ -15,7 +15,6 @@ users_maps = {"admin": Map()}
 
 
 @app.route("/map")
-@app.route("/")
 def map():
     for img in users_img_stack["admin"]:
         os.remove(img)
