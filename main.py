@@ -26,7 +26,6 @@ def map():
 
 @app.route("/_map", methods=["POST"])
 def _map():
-    print('as')
     mouse_x = request.form.get("mouse_x")
     mouse_y = request.form.get("mouse_y")
     img_num = time.time_ns()
