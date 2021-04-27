@@ -29,8 +29,9 @@
 }
 
 .button_div {
-    margin-left: 820px;
-    margin-top: 150px;
+    position: absolute;
+    margin-left: 425px;
+    top: 145px;
 }
 
 .button_row {
@@ -65,12 +66,9 @@
 }
 
 .map_form {
-    margin-top: 20px;
-    margin-left: 140px;
+    position: absolute;
+    top: 620px;
+    margin-left: -250px;
     width: 650px;
     text-align: center;
-}
-
-body {
-    background-color: #c4c4c4;
 }

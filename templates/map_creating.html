@@ -1,7 +1,9 @@
+{% extends 'layout.html' %}
 <!DOCTYPE html>
 <html>
 
 <head>
+    {% block head %}
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -11,10 +13,12 @@
     <script type=text/javascript src="{{
   url_for('static', filename='jquery.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/map_page.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/map_page.css') }}"> {% endblock %}
 </head>
 
+
 <body>
+    {% block body %}
     <img src={{img}} id="map" alt="Карты не нашлось :(">
     <div class="button_div">
         <div class="button_row">
@@ -44,6 +48,7 @@
         <input type="text" class="form-control" placeholder="Name your path" name="path_name">
         <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save</button>
     </form>
+
     <script>
         let mouse_x = null,
             mouse_y = null;
@@ -133,5 +138,6 @@
         })
     </script>
 </body>
+{% endblock %}
 
 </html>
