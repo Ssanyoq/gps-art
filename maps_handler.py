@@ -2,7 +2,7 @@ import requests
 
 
 class Map:
-    def __init__(self, start_ll=None, start_z=10, size=(650, 450), layer="map"):
+    def __init__(self, start_ll=None, start_z=10, size=(650, 450), layer="map", data_string=None):
         """
         :param start_ll: начальная долгота, широта центра карты
         :param start_z: начальный уровень приближения
@@ -28,6 +28,8 @@ class Map:
         # Вычислена мной, почему-то работает
 
         self.pts = []  # все точки
+        if data_string is not None:
+            self.get_data_from_string(data_string)
 
     def change_size(self, new_size) -> None:
         """
@@ -112,6 +114,7 @@ class Map:
         :param x: x точки
         :param y: y точки
         """
+
         if self.z <= 7:
             return
 
@@ -192,6 +195,48 @@ class Map:
         if self.pts:
             self.pts.pop()
             self.make_pts_param()
+
+    def get_data_string(self) -> str:
+        """
+        Делает строку, по которой можно
+        воссоздать класс путем вызова функции ниже
+        :return: str
+        """
+        string = ""
+        for key in self.params.keys():
+            string += f'{key}:{self.params[key]};'
+        return string
+
+    def get_data_from_string(self, string) -> None:
+        """
+        Получает данные из строки, созданной методом
+        get_data_string()
+        :param string: str
+        :return: None
+        """
+        self.params = {}
+        params = string.split(';')[:-1]
+        for param in params:
+            val = param.split(":")
+            self.params[val[0]] = val[1]
+        if "ll" in self.params.keys():
+            self.ll = [float(v) for v in self.params["ll"].split(",")]
+        if "z" in self.params.keys():
+            self.z = int(self.params["z"])
+            self.spn = 180 / 2 ** self.z
+        if "size" in self.params.keys():
+            self.size = [float(v) for v in self.params["ll"].split(",")]
+        if "l" in self.params.keys():
+            self.layer = self.params["l"]
+        if "pl" in self.params.keys():
+            new_pl = self.params["pl"].split(",")
+            self.pts = [[float(new_pl[i]), float(new_pl[i + 1])] for i in
+                        range(0, len(new_pl) - 1, 2)]
+        elif "pt" in self.params.keys():
+            new_pt = self.params["pt"].split("~")
+            self.pts = [[float(i.split(",")[0]), float(i.split(",")[1])] for i in new_pt]
+        print(f"pts:{self.pts}\nl:{self.layer}\nz:{self.z}\nll:{self.ll}\nspn:{self.spn}")
+        print(f"params:{self.params}")
 
 # Ниже визуализатор работы класса на pygame
 

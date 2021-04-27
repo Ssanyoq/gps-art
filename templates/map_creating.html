@@ -15,9 +15,6 @@
 </head>
 
 <body>
-    <div class="path_namer">
-        <input type="text" class="form-control" placeholder="Name your path">
-    </div>
     <img src={{img}} id="map" alt="Карты не нашлось :(">
     <div class="button_div">
         <div class="button_row">
@@ -41,10 +38,12 @@
         </div>
         <div style="margin-top:  39px;">
             <img src="../static/img/arrow-counterclockwise.svg" alt="Беды с картинкой" class="time_travel_key" id="step_back">
-            <!-- <img src="../static/img/zoom-out.svg" alt="Беды с картинкой" class="zoom_key" id="minus"> -->
         </div>
     </div>
-    <button type="submit" class="btn btn-primary" style="margin-top: 15px;margin-left: 800px;">Save</button>
+    <form method="post" class="map_form">
+        <input type="text" class="form-control" placeholder="Name your path" name="path_name">
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save</button>
+    </form>
     <script>
         let mouse_x = null,
             mouse_y = null;

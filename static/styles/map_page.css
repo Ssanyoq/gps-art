@@ -30,7 +30,7 @@
 
 .button_div {
     margin-left: 820px;
-    margin-top: 13px;
+    margin-top: 150px;
 }
 
 .button_row {
@@ -62,6 +62,13 @@
 
 .time_travel_key:hover {
     background-color: #7A7A7A;
+}
+
+.map_form {
+    margin-top: 20px;
+    margin-left: 140px;
+    width: 650px;
+    text-align: center;
 }
 
 body {
