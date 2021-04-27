@@ -37,6 +37,16 @@ def _map():
         for d in directions:
             users_maps["admin"].move(d)
 
+    elif req == "zoom":
+        zoom_type = request.form.get("zoom_type")
+        if zoom_type == "plus":
+            users_maps["admin"].change_z(users_maps["admin"].z + 1)
+        elif zoom_type == "minus":
+            users_maps["admin"].change_z(users_maps["admin"].z - 1)
+    elif req == "time_travel":
+        travel_type = request.form.get("travel_type")
+        if travel_type == "step_back":
+            users_maps["admin"].undo()
     img_num = time.time_ns()
     cur_map = "static/img/users_maps/map-123-" + str(img_num)[4:] + ".png"
     users_maps["admin"].request_map(cur_map)

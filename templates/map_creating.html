@@ -35,8 +35,16 @@
             <img src="../static/img/arrow-down-square.svg" alt="Беды с картинкой" class="arrow" id="down">
             <img src="../static/img/arrow-down-right-square.svg" alt="Беды с картинкой" class="arrow" id="down-right">
         </div>
+        <div style="margin-top: 75px;">
+            <img src="../static/img/zoom-in.svg" alt="Беды с картинкой" class="zoom_key" id="plus">
+            <img src="../static/img/zoom-out.svg" alt="Беды с картинкой" class="zoom_key" id="minus">
+        </div>
+        <div style="margin-top:  39px;">
+            <img src="../static/img/arrow-counterclockwise.svg" alt="Беды с картинкой" class="time_travel_key" id="step_back">
+            <!-- <img src="../static/img/zoom-out.svg" alt="Беды с картинкой" class="zoom_key" id="minus"> -->
+        </div>
     </div>
-
+    <button type="submit" class="btn btn-primary" style="margin-top: 15px;margin-left: 800px;">Save</button>
     <script>
         let mouse_x = null,
             mouse_y = null;
@@ -89,6 +97,34 @@
                 data: {
                     req_type: "move",
                     direction: event.target.id.toString()
+                },
+                dataType: "text",
+                success: function(img_path) {
+                    document.getElementById("map").src = img_path;
+                }
+            });
+        })
+        $(".zoom_key").click(function(event) {
+            $.ajax({
+                type: 'POST',
+                url: "/_map",
+                data: {
+                    req_type: "zoom",
+                    zoom_type: event.target.id
+                },
+                dataType: "text",
+                success: function(img_path) {
+                    document.getElementById("map").src = img_path;
+                }
+            });
+        })
+        $(".time_travel_key").click(function(event) {
+            $.ajax({
+                type: 'POST',
+                url: "/_map",
+                data: {
+                    req_type: "time_travel",
+                    travel_type: event.target.id
                 },
                 dataType: "text",
                 success: function(img_path) {

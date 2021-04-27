@@ -144,10 +144,18 @@ class Map:
         """
         Меняет значение z
         :param z: новое значение z
+        :return: True, если изменилось, False, если нет
         """
+        if z >= 22:
+            # Не будет нормально работать
+            return False
+        elif z <= 0:
+            # Беды с запросом тогда
+            return False
         self.z = z
         self.params["z"] = z
         self.spn = 180 / 2 ** self.z
+        return True
 
     def move(self, direction) -> None:
         """
@@ -184,7 +192,6 @@ class Map:
         if self.pts:
             self.pts.pop()
             self.make_pts_param()
-
 
 # Ниже визуализатор работы класса на pygame
 
