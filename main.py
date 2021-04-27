@@ -20,14 +20,13 @@ def map():
         for img in users_img_stack["admin"]:
             os.remove(img)
         users_img_stack["admin"] = []
-        users_maps["admin"] = Map(
-            data_string="size:650,450;l:map;z:9;ll:37.09272625,55.75363;pt:37.531875949519225,55.81954796875,pm2am~36.624290312499994,55.7239815625,pm2bm;pl:37.531875949519225,55.81954796875,37.72336014423077,55.679391718750004,37.77846350961538,55.784508906250004,36.624290312499994,55.7239815625;")
+        users_maps["admin"] = Map()
         img_num = time.time_ns()
         cur_map = "static/img/users_maps/map-123-" + str(img_num)[4:] + ".png"
         users_maps["admin"].request_map(cur_map)
         return render_template("map_creating.html", img="../" + cur_map)
     elif request.method == "POST":
-        return request.form["path_name"], users_maps["admin"].get_data_string()
+        return request.form["path_name"] + "\n" + users_maps["admin"].get_data_string()
 
 
 @app.route("/_map", methods=["POST"])
