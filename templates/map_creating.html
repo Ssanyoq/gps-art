@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <title>Gps art - map creating</title>
+    <script type=text/javascript src="{{
+  url_for('static', filename='jquery.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/map_page.css') }}">
+</head>
+
+<body>
+    <img src={{img}} id="map" alt="Карты не нашлось :(">
+    <div class="button_div">
+        <div class="button_row">
+            <img src="../static/img/arrow-up-left-square.svg" alt="Беды с картинкой" class="arrow" id="left-up">
+            <img src="../static/img/arrow-up-square.svg" alt="Беды с картинкой" class="arrow" id="up">
+            <img src="../static/img/arrow-up-right-square.svg" alt="Беды с картинкой" class="arrow" id="right-up">
+        </div>
+        <div class="button_row">
+            <img src="../static/img/arrow-left-square.svg" alt="Беды с картинкой" class="arrow " id="left">
+            <img src="../static/img/app.svg" alt="Беды с картинкой" class="not_a_btn" id="null">
+            <img src="../static/img/arrow-right-square.svg" alt="Беды с картинкой" class="arrow" id="right">
+        </div>
+        <div class="button_row">
+            <img src="../static/img/arrow-down-left-square.svg" alt="Беды с картинкой" class="arrow " id="down-left">
+            <img src="../static/img/arrow-down-square.svg" alt="Беды с картинкой" class="arrow" id="down">
+            <img src="../static/img/arrow-down-right-square.svg" alt="Беды с картинкой" class="arrow" id="down-right">
+        </div>
+        <div style="margin-top: 75px;">
+            <img src="../static/img/zoom-in.svg" alt="Беды с картинкой" class="zoom_key" id="plus">
+            <img src="../static/img/zoom-out.svg" alt="Беды с картинкой" class="zoom_key" id="minus">
+        </div>
+        <div style="margin-top:  39px;">
+            <img src="../static/img/arrow-counterclockwise.svg" alt="Беды с картинкой" class="time_travel_key" id="step_back">
+        </div>
+    </div>
+    <form method="post" class="map_form">
+        <input type="text" class="form-control" placeholder="Name your path" name="path_name">
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save</button>
+    </form>
+    <script>
+        let mouse_x = null,
+            mouse_y = null;
+        (function() {
+            document.onmousemove = handleMouseMove;
+
+            function handleMouseMove(event) {
+                var eventDoc, doc, body;
+
+                event = event || window.event;
+
+                if (event.pageX == null && event.clientX != null) {
+                    eventDoc = (event.target && event.target.ownerDocument) || document;
+                    doc = eventDoc.documentElement;
+                    body = eventDoc.body;
+
+                    event.pageX = event.clientX +
+                        (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+                        (doc && doc.clientLeft || body && body.clientLeft || 0);
+                    event.pageY = event.clientY +
+                        (doc && doc.scrollTop || body && body.scrollTop || 0) -
+                        (doc && doc.clientTop || body && body.clientTop || 0);
+                }
+
+                // Use event.pageX / event.pageY here
+                mouse_x = event.pageX;
+                mouse_y = event.pageY;
+
+            }
+        })();
+        $("#map").click(function(smth) {
+            $.ajax({
+                type: 'POST',
+                url: "/_map",
+                data: {
+                    req_type: "place",
+                    mouse_x: mouse_x,
+                    mouse_y: mouse_y
+                },
+                dataType: "text",
+                success: function(img_path) {
+                    document.getElementById("map").src = img_path;
+                }
+            });
+        });
+        $(".arrow").click(function(event) {
+            $.ajax({
+                type: 'POST',
+                url: "/_map",
+                data: {
+                    req_type: "move",
+                    direction: event.target.id.toString()
+                },
+                dataType: "text",
+                success: function(img_path) {
+                    document.getElementById("map").src = img_path;
+                }
+            });
+        })
+        $(".zoom_key").click(function(event) {
+            $.ajax({
+                type: 'POST',
+                url: "/_map",
+                data: {
+                    req_type: "zoom",
+                    zoom_type: event.target.id
+                },
+                dataType: "text",
+                success: function(img_path) {
+                    document.getElementById("map").src = img_path;
+                }
+            });
+        })
+        $(".time_travel_key").click(function(event) {
+            $.ajax({
+                type: 'POST',
+                url: "/_map",
+                data: {
+                    req_type: "time_travel",
+                    travel_type: event.target.id
+                },
+                dataType: "text",
+                success: function(img_path) {
+                    document.getElementById("map").src = img_path;
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>
