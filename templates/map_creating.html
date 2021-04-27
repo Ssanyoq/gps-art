@@ -18,7 +18,7 @@
 
 
 <body>
-    {% block body %}
+    {% block body %} {% if session.logged_in %}
     <img src={{img}} id="map" alt="Карты не нашлось :(">
     <div class="button_div">
         <div class="button_row">
@@ -48,7 +48,9 @@
         <input type="text" class="form-control" placeholder="Name your path" name="path_name">
         <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save</button>
     </form>
-
+    {% else %}
+    <h2>You must be logged in to be able to create paths</h2>
+    {% endif %}
     <script>
         let mouse_x = null,
             mouse_y = null;
