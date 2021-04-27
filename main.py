@@ -15,7 +15,7 @@ def index():
 class RegisterForm(Form):
     username = StringField('Username', [validators.Length(min=3, max=15), validators.DataRequired()])
 
-    email = StringField('Email', [validators.Length(min=6, max=50), validators.Email(),
+    email = StringField('Email', [validators.Length(min=6, max=50), #validators.Email(),
                                   validators.DataRequired()])
 
     password = PasswordField('Password', [
@@ -34,7 +34,7 @@ def register():
         username = form.username.data
         password = generate_password_hash(str(form.password.data))
 
-        con = sqlite3.connect('users.db')
+        con = sqlite3.connect('db/users.db')
         cur = con.cursor()
 
         results = cur.execute("SELECT username, email FROM users").fetchall()
@@ -71,7 +71,7 @@ def login():
         password_check = request.form.get('password', False)
         password = ''
 
-        con = sqlite3.connect('users.db')
+        con = sqlite3.connect('db/users.db')
         cur = con.cursor()
 
         result = cur.execute(f"""SELECT username, hashed_password FROM users""").fetchall()
