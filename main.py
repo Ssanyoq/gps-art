@@ -180,6 +180,25 @@ def _map():
     return "../" + cur_map
 
 
+@app.route("/paths", methods=["POST", "GET"])
+def map_browser():
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        uid = db_sess.query(User).filter(User.username == session["username"]).first()
+        uid = uid.id
+        paths = db_sess.query(Route).filter(Route.user_id == uid)
+        params = {"paths": []}
+        for path in paths:
+            params["paths"].append({"id": path.id, "name": path.name})
+        return render_template("map_browser.html", **params)
+    else:
+        db_sess = db_session.create_session()
+        bad_route = db_sess.query(Route).filter(Route.id == request.form["data"]).first()
+        db_sess.delete(bad_route)
+        db_sess.commit()
+        return redirect("paths")
+
+
 def main():
     db_session.global_init("db/users.db")
     app.run(port=8888, host="127.0.0.1")
