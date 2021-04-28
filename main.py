@@ -87,11 +87,12 @@ def login():
         con = sqlite3.connect('db/users.db')
         cur = con.cursor()
 
-        result = cur.execute(f"""SELECT username, hashed_password FROM users""").fetchall()
+        result = cur.execute(f"""SELECT username, hashed_password, id FROM users""").fetchall()
 
         for res in result:
             if res[0] == username:
                 password = res[1]
+                uid = res[2]
 
         if password == '':
             flash('Invalid username')
@@ -99,7 +100,9 @@ def login():
         elif check_password_hash(password, password_check):
             session['logged_in'] = True
             session['username'] = username
-
+            session["img_stack"] = []
+            users_maps[session["username"]] = Map()
+            session['id'] = uid
             flash('You are now logged in', 'success')
 
             # return redirect(url_for('register'))
@@ -132,7 +135,65 @@ def logout():
 
 
 @app.route("/map", methods=["POST", "GET"])
+@is_logged_in
 def map():
+    if request.method == "GET":
+        for img in session["img_stack"]:
+            os.remove(img)
+        session["img_stack"] = []
+        users_maps[session["username"]] = Map()
+        img_num = time.time_ns()
+        cur_map = f"static/img/users_maps/map-{session['id']}-{str(img_num)[4:]}.png"
+        users_maps[session["username"]].request_map(cur_map)
+
+        return render_template("map_creating.html", img="../" + cur_map)
+    elif request.method == "POST":
+        db_sess = db_session.create_session()
+        new_route = Route()
+        new_route.name = request.form["path_name"]
+        new_route.points = users_maps[session["username"]].get_data_string()
+        new_route.user_id = session["id"]
+        db_sess.add(new_route)
+        db_sess.commit()
+        return redirect("paths")
+
+
+@app.route("/_map", methods=["POST"])
+def _map():
+    req = request.form.get("req_type")
+    if req == "place":
+        mouse_x = request.form.get("mouse_x")
+        mouse_y = request.form.get("mouse_y")
+        users_maps[session["username"]].place_point(int(mouse_x) - 140, int(mouse_y) - 150)
+
+    elif req == "move":
+        direction = request.form.get("direction")
+        directions = direction.split("-")  # Ведь есть направления типа "right-up"
+        for d in directions:
+            users_maps[session["username"]].move(d)
+
+    elif req == "zoom":
+        zoom_type = request.form.get("zoom_type")
+        if zoom_type == "plus":
+            users_maps[session["username"]].change_z(users_maps[session["username"]].z + 1)
+        elif zoom_type == "minus":
+            users_maps[session["username"]].change_z(users_maps[session["username"]].z - 1)
+    elif req == "time_travel":
+        travel_type = request.form.get("travel_type")
+        if travel_type == "step_back":
+            users_maps[session["username"]].undo()
+
+    img_num = time.time_ns()
+    cur_map = "static/img/users_maps/map-123-" + str(img_num)[4:] + ".png"
+    users_maps[session["username"]].request_map(cur_map)
+    if session['img_stack']:
+        os.remove(session['img_stack'].pop())
+    session['img_stack'].append(cur_map)
+    return "../" + cur_map
+
+
+@app.route("/map/<int:path_id>")
+def spectate_map(path_id):
     if request.method == "GET":
         for img in users_img_stack["admin"]:
             os.remove(img)
@@ -144,40 +205,6 @@ def map():
         return render_template("map_creating.html", img="../" + cur_map)
     elif request.method == "POST":
         return request.form["path_name"] + "\n" + users_maps["admin"].get_data_string()
-
-
-@app.route("/_map", methods=["POST"])
-def _map():
-    req = request.form.get("req_type")
-    if req == "place":
-        mouse_x = request.form.get("mouse_x")
-        mouse_y = request.form.get("mouse_y")
-        users_maps["admin"].place_point(int(mouse_x) - 140, int(mouse_y) - 150)
-
-    elif req == "move":
-        direction = request.form.get("direction")
-        directions = direction.split("-")  # Ведь есть направления типа "right-up"
-        for d in directions:
-            users_maps["admin"].move(d)
-
-    elif req == "zoom":
-        zoom_type = request.form.get("zoom_type")
-        if zoom_type == "plus":
-            users_maps["admin"].change_z(users_maps["admin"].z + 1)
-        elif zoom_type == "minus":
-            users_maps["admin"].change_z(users_maps["admin"].z - 1)
-    elif req == "time_travel":
-        travel_type = request.form.get("travel_type")
-        if travel_type == "step_back":
-            users_maps["admin"].undo()
-
-    img_num = time.time_ns()
-    cur_map = "static/img/users_maps/map-123-" + str(img_num)[4:] + ".png"
-    users_maps["admin"].request_map(cur_map)
-    if users_img_stack["admin"]:
-        os.remove(users_img_stack["admin"].pop())
-    users_img_stack["admin"].append(cur_map)
-    return "../" + cur_map
 
 
 @app.route("/paths", methods=["POST", "GET"])
