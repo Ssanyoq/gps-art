@@ -129,6 +129,8 @@ def is_logged_in(f):
 @app.route('/logout')
 @is_logged_in
 def logout():
+    for img in session['img_stack']:
+        os.remove(img)
     session.clear()
     flash('You are now logged out')
     return redirect(url_for('login'))
@@ -145,12 +147,15 @@ def map():
         img_num = time.time_ns()
         cur_map = f"static/img/users_maps/map-{session['id']}-{str(img_num)[4:]}.png"
         users_maps[session["username"]].request_map(cur_map)
-
+        session['img_stack'].append(cur_map)
         return render_template("map_creating.html", img="../" + cur_map)
     elif request.method == "POST":
         db_sess = db_session.create_session()
         new_route = Route()
-        new_route.name = request.form["path_name"]
+        if request.form['path_name']:
+            new_route.name = request.form["path_name"]
+        else:
+            new_route.name = 'Unnamed path'
         new_route.points = users_maps[session["username"]].get_data_string()
         new_route.user_id = session["id"]
         db_sess.add(new_route)
@@ -184,27 +189,33 @@ def _map():
             users_maps[session["username"]].undo()
 
     img_num = time.time_ns()
-    cur_map = "static/img/users_maps/map-123-" + str(img_num)[4:] + ".png"
+    cur_map = f"static/img/users_maps/map-{session['id']}-{str(img_num)[4:]}.png"
     users_maps[session["username"]].request_map(cur_map)
-    if session['img_stack']:
-        os.remove(session['img_stack'].pop())
-    session['img_stack'].append(cur_map)
+    for img in session["img_stack"]:
+        os.remove(img)
+    session['img_stack'] = [cur_map]
     return "../" + cur_map
 
 
 @app.route("/map/<int:path_id>")
 def spectate_map(path_id):
     if request.method == "GET":
-        for img in users_img_stack["admin"]:
+        db_sess = db_session.create_session()
+        the_route = db_sess.query(Route).filter(Route.id == path_id).first()
+        if the_route:
+            if the_route.user_id != session['id']:
+                return render_template("bad_page.html", message="That's not your path!")
+        else:
+            return render_template("bad_page.html", message="This path does not exist")
+        for img in session['img_stack']:
             os.remove(img)
-        users_img_stack["admin"] = []
-        users_maps["admin"] = Map()
+        session['img_stack'] = []
+        users_maps[session["username"]] = Map(data_string=the_route.points)
         img_num = time.time_ns()
-        cur_map = "static/img/users_maps/map-123-" + str(img_num)[4:] + ".png"
-        users_maps["admin"].request_map(cur_map)
-        return render_template("map_creating.html", img="../" + cur_map)
-    elif request.method == "POST":
-        return request.form["path_name"] + "\n" + users_maps["admin"].get_data_string()
+        cur_map = f"static/img/users_maps/map-{session['id']}-{str(img_num)[4:]}.png"
+        users_maps[session["username"]].request_map(cur_map)
+        session['img_stack'].append(cur_map)
+        return render_template("map_spectating.html", img="../" + cur_map)
 
 
 @app.route("/paths", methods=["POST", "GET"])
