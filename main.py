@@ -35,11 +35,13 @@ class RegisterForm(Form):
 
 @app.route('/')
 def index():
+    """Главная страница"""
     return render_template('home.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """Страница регистрации"""
     form = RegisterForm(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -79,6 +81,7 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Страница входа"""
     if request.method == 'POST':
         username = request.form.get('username', False)
         password_check = request.form.get('password', False)
@@ -117,6 +120,7 @@ def login():
 
 
 def is_logged_in(f):
+    """Проверяет, вошел ли пользователь"""
     @wraps(f)
     def wrap(*args, **kwargs):
         if 'logged_in' in session:
@@ -132,6 +136,7 @@ def is_logged_in(f):
 @app.route('/logout')
 @is_logged_in
 def logout():
+    """Функция для выхода"""
     for img in session['img_stack']:
         if os.path.exists(img):
             os.remove(img)
@@ -143,6 +148,7 @@ def logout():
 @app.route("/map", methods=["POST", "GET"])
 @is_logged_in
 def map():
+    """Страница для создания нового пути"""
     if request.method == "GET":
         for img in session["img_stack"]:
             os.remove(img)
@@ -169,6 +175,7 @@ def map():
 
 @app.route("/_map", methods=["POST"])
 def _map():
+    """Обработчик ajax запросов со страниц с картой (которая map() и spectate_map())"""
     req = request.form.get("req_type")
     if req == "place":
         mouse_x = request.form.get("mouse_x")
@@ -204,6 +211,7 @@ def _map():
 @app.route("/map/<int:path_id>")
 @is_logged_in
 def spectate_map(path_id):
+    """Страница для просмотра уже созданных путей"""
     if request.method == "GET":
         db_sess = db_session.create_session()
         the_route = db_sess.query(Route).filter(Route.id == path_id).first()
@@ -226,6 +234,7 @@ def spectate_map(path_id):
 @app.route("/paths", methods=["POST", "GET"])
 @is_logged_in
 def map_browser():
+    """Страница со всеми путями пользователя"""
     if request.method == "GET":
         db_sess = db_session.create_session()
         uid = db_sess.query(User).filter(User.username == session["username"]).first()
@@ -245,6 +254,7 @@ def map_browser():
 
 @app.errorhandler(404)
 def not_found(*args):
+    """Красивая страница 404"""
     return render_template("bad_page.html", message="404: This page does not exist")
 
 
