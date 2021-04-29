@@ -103,10 +103,12 @@ def login():
             session["img_stack"] = []
             users_maps[session["username"]] = Map()
             session['id'] = uid
+            session.pop('_flashes', None)
             flash('You are now logged in', 'success')
 
-            # return redirect(url_for('register'))
+            return redirect("/")
         else:
+            session.pop('_flashes', None)
             flash('Invalid password')
 
         cur.close()
@@ -120,7 +122,8 @@ def is_logged_in(f):
         if 'logged_in' in session:
             return f(*args, **kwargs)
         else:
-            flash('Unauthorized, Please login')
+            session.pop('_flashes', None)
+            flash('Unauthorized, Please log in')
             return redirect(url_for('login'))
 
     return wrap
@@ -198,6 +201,7 @@ def _map():
 
 
 @app.route("/map/<int:path_id>")
+@is_logged_in
 def spectate_map(path_id):
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -219,6 +223,7 @@ def spectate_map(path_id):
 
 
 @app.route("/paths", methods=["POST", "GET"])
+@is_logged_in
 def map_browser():
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -235,6 +240,11 @@ def map_browser():
         db_sess.delete(bad_route)
         db_sess.commit()
         return redirect("paths")
+
+
+@app.errorhandler(404)
+def not_found(*args):
+    return render_template("bad_page.html", message="404: This page does not exist")
 
 
 def main():
