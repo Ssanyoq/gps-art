@@ -23,7 +23,7 @@ class RegisterForm(Form):
     username = StringField('Username',
                            [validators.Length(min=3, max=15), validators.DataRequired()])
 
-    email = StringField('Email', [validators.Length(min=6, max=50),  # validators.Email(),
+    email = StringField('Email', [validators.Length(min=6, max=50), validators.Email(),
                                   validators.DataRequired()])
 
     password = PasswordField('Password', [
