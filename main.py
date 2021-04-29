@@ -133,7 +133,8 @@ def is_logged_in(f):
 @is_logged_in
 def logout():
     for img in session['img_stack']:
-        os.remove(img)
+        if os.path.exists(img):
+            os.remove(img)
     session.clear()
     flash('You are now logged out')
     return redirect(url_for('login'))
