@@ -23,8 +23,9 @@ class RegisterForm(Form):
     username = StringField('Username',
                            [validators.Length(min=3, max=15), validators.DataRequired()])
 
-    email = StringField('Email', [validators.Length(min=6, max=50), validators.Email(),
-                                  validators.DataRequired()])
+    email = StringField('Email',
+                        [validators.Length(min=6, max=50), validators.Email(),
+                         validators.DataRequired()])
 
     password = PasswordField('Password', [
         validators.DataRequired(),
@@ -121,6 +122,7 @@ def login():
 
 def is_logged_in(f):
     """Проверяет, вошел ли пользователь"""
+
     @wraps(f)
     def wrap(*args, **kwargs):
         if 'logged_in' in session:
@@ -151,7 +153,8 @@ def map():
     """Страница для создания нового пути"""
     if request.method == "GET":
         for img in session["img_stack"]:
-            os.remove(img)
+            if os.path.exists(img):
+                os.remove(img)
         session["img_stack"] = []
         users_maps[session["username"]] = Map()
         img_num = time.time_ns()
@@ -203,7 +206,8 @@ def _map():
     cur_map = f"static/img/users_maps/map-{session['id']}-{str(img_num)[4:]}.png"
     users_maps[session["username"]].request_map(cur_map)
     for img in session["img_stack"]:
-        os.remove(img)
+        if os.path.exists(img):
+            os.remove(img)
     session['img_stack'] = [cur_map]
     return "../" + cur_map
 
@@ -221,7 +225,8 @@ def spectate_map(path_id):
         else:
             return render_template("bad_page.html", message="This path does not exist")
         for img in session['img_stack']:
-            os.remove(img)
+            if os.path.exists(img):
+                os.remove(img)
         session['img_stack'] = []
         users_maps[session["username"]] = Map(data_string=the_route.points)
         img_num = time.time_ns()
@@ -259,6 +264,10 @@ def not_found(*args):
 
 
 def main():
+    if not os.path.exists("static/img/users_maps"):
+        os.mkdir("static/img/users_maps")
+    if not os.path.exists("db"):
+        os.mkdir("db")
     db_session.global_init("db/users.db")
     app.run(port=8888, host="127.0.0.1")
 
