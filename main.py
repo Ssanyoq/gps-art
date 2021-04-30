@@ -14,8 +14,6 @@ from maps_handler import Map
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-test_map = Map()
-users_img_stack = {"admin": []}
 users_maps = {"admin": Map()}
 
 
@@ -149,7 +147,7 @@ def logout():
 
 @app.route("/map", methods=["POST", "GET"])
 @is_logged_in
-def map():
+def map_creating():
     """Страница для создания нового пути"""
     if request.method == "GET":
         for img in session["img_stack"]:
@@ -173,12 +171,15 @@ def map():
         new_route.user_id = session["id"]
         db_sess.add(new_route)
         db_sess.commit()
+        for img in session["img_stack"]:
+            if os.path.exists(img):
+                os.remove(img)
         return redirect("paths")
 
 
 @app.route("/_map", methods=["POST"])
 def _map():
-    """Обработчик ajax запросов со страниц с картой (которая map() и spectate_map())"""
+    """Обработчик ajax запросов со страниц с картой (которая map_creating() и spectate_map())"""
     req = request.form.get("req_type")
     if req == "place":
         mouse_x = request.form.get("mouse_x")
