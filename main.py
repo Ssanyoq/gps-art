@@ -32,7 +32,6 @@ class RegisterForm(Form):
         # Почему-то не у всех при установке flask (ну или werkzeug) работает
         # Email валидатор. Я пытался найти решение, но почему-то не смог
 
-
     password = PasswordField('Password', [
         validators.DataRequired(),
         validators.EqualTo('confirm', message="Passwords don't match")
@@ -59,7 +58,8 @@ def register():
         con = sqlite3.connect('db/users.db')
         cur = con.cursor()
 
-        results = cur.execute("SELECT username, email FROM users").fetchall()
+        results = cur.execute(f"""SELECT username, email FROM users 
+        WHERE (email = '{email}' or username = '{username}')""").fetchall()
 
         for res in results:
             if res[0] == str(username) or res[1] == email:
@@ -97,12 +97,13 @@ def login():
         con = sqlite3.connect('db/users.db')
         cur = con.cursor()
 
-        result = cur.execute(f"""SELECT username, hashed_password, id FROM users""").fetchall()
+        result = cur.execute(f"""SELECT username, hashed_password, id FROM users 
+        WHERE username == '{username}'""").fetchall()
+        con.close()
 
-        for res in result:
-            if res[0] == username:
-                password = res[1]
-                uid = res[2]
+        if result:
+            password = result[0][1]
+            uid = result[0][2]
 
         if password == '':
             flash('Invalid username')
@@ -120,8 +121,6 @@ def login():
         else:
             session.pop('_flashes', None)
             flash('Invalid password')
-
-        cur.close()
 
     return render_template('login.html')
 
