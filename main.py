@@ -25,12 +25,20 @@ class RegisterForm(Form):
                             [validators.Length(min=6, max=50), validators.Email(),
                              validators.DataRequired()])
     except Exception:
-        email = StringField('Email',
-                            [validators.Length(min=6, max=50),
-                             validators.DataRequired()])
-        print("!!! Email validator отключен (строчка 31)")
-        # Почему-то не у всех при установке flask (ну или werkzeug) работает
-        # Email валидатор. Я пытался найти решение, но почему-то не смог
+        raise Exception("\nПроблемы с email валидатором! строчка 28")
+        # Для решения проблемы надо удалить эти 3 строчки и раскомментить последующие
+    # except Exception:
+    #     email = StringField('Email',
+    #                         [validators.Length(min=6, max=50),
+    #                          validators.DataRequired()])
+    #     print("!!! Email validator отключен (строчка 31) !!!")
+    #     # Почему-то не у всех при установке wtforms работает
+    #     # Email валидатор. Я смотрел решения этой проблемы на всяких там StackOverflow,
+    #     # но решений не нашлось
+    #     # (это не программа плохая, а wtforms)
+
+    # Можно было, конечно, просто без предупредительных предупреждений отрубить email валидатор,
+    # но тогда есть шанс того, что кто-то из проверяющих пожалуется (плохо)
 
     password = PasswordField('Password', [
         validators.DataRequired(),
