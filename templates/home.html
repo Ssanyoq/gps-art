@@ -1,12 +1,12 @@
 {% extends 'layout.html' %} {% block body %}
 <div class="jumbotron text-center">
-    <h1>Welcome To GPS-art</h1>
+    <h1>Welcome To GPS art</h1>
 
     {% if session.logged_in == NULL %}
-    <h2>To create and watch paths you must be logged in</h2>
+    <h2>To create and watch routes you must be logged in</h2>
     <a href="/register" class="btn btn-primary btn-lg">Register</a>
     <a href="/login" class="btn btn-success btn-lg">Log in</a>{% else %}
-    <h2>Feeling creative today?<br><br><a href="/map" class="btn btn-primary btn-lg">Create new path</a> or just <a href="/paths" class="btn btn-success btn-lg">Go to your paths</a></h2>
+    <h2>Feeling creative today?<br><br><a href="/map" class="btn btn-primary btn-lg">Create new route</a> or just <a href="/paths" class="btn btn-success btn-lg">Go to your routes</a></h2>
     {% endif %}
 </div>
 {% endblock %}

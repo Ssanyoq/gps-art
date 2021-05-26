@@ -30,7 +30,7 @@
 
 .button_div {
     position: absolute;
-    margin-left: 425px;
+    left: 875px;
     top: 145px;
 }
 
@@ -68,7 +68,7 @@
 .map_form {
     position: absolute;
     top: 620px;
-    margin-left: -250px;
+    left: 140px;
     width: 650px;
     text-align: center;
 }

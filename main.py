@@ -20,10 +20,18 @@ users_maps = {"admin": Map()}
 class RegisterForm(Form):
     username = StringField('Username',
                            [validators.Length(min=3, max=15), validators.DataRequired()])
+    try:
+        email = StringField('Email',
+                            [validators.Length(min=6, max=50), validators.Email(),
+                             validators.DataRequired()])
+    except Exception:
+        email = StringField('Email',
+                            [validators.Length(min=6, max=50),
+                             validators.DataRequired()])
+        print("!!! Email validator отключен (строчка 31)")
+        # Почему-то не у всех при установке flask (ну или werkzeug) работает
+        # Email валидатор. Я пытался найти решение, но почему-то не смог
 
-    email = StringField('Email',
-                        [validators.Length(min=6, max=50), validators.Email(),
-                         validators.DataRequired()])
 
     password = PasswordField('Password', [
         validators.DataRequired(),
@@ -179,7 +187,7 @@ def map_creating():
 
 @app.route("/_map", methods=["POST"])
 def _map():
-    """Обработчик ajax запросов со страниц с картой (которая map_creating() и spectate_map())"""
+    """Обработчик ajax запросов со страниц с картой (которые map_creating() и spectate_map())"""
     req = request.form.get("req_type")
     if req == "place":
         mouse_x = request.form.get("mouse_x")
@@ -222,9 +230,9 @@ def spectate_map(path_id):
         the_route = db_sess.query(Route).filter(Route.id == path_id).first()
         if the_route:
             if the_route.user_id != session['id']:
-                return render_template("bad_page.html", message="That's not your path!")
+                return render_template("bad_page.html", message="That's not your route!")
         else:
-            return render_template("bad_page.html", message="This path does not exist")
+            return render_template("bad_page.html", message="This route does not exist")
         for img in session['img_stack']:
             if os.path.exists(img):
                 os.remove(img)

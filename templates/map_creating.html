@@ -19,35 +19,37 @@
 
 <body>
     {% block body %} {% if session.logged_in %}
-    <img src={{img}} id="map" alt="Карты не нашлось :(">
-    <div class="button_div">
-        <div class="button_row">
-            <img src="../static/img/arrow-up-left-square.svg" alt="Беды с картинкой" class="arrow" id="left-up">
-            <img src="../static/img/arrow-up-square.svg" alt="Беды с картинкой" class="arrow" id="up">
-            <img src="../static/img/arrow-up-right-square.svg" alt="Беды с картинкой" class="arrow" id="right-up">
+    <div>
+        <img src={{img}} id="map" alt="Карты не нашлось :(">
+        <div class="button_div">
+            <div class="button_row">
+                <img src="../static/img/arrow-up-left-square.svg" alt="Беды с картинкой" class="arrow" id="left-up">
+                <img src="../static/img/arrow-up-square.svg" alt="Беды с картинкой" class="arrow" id="up">
+                <img src="../static/img/arrow-up-right-square.svg" alt="Беды с картинкой" class="arrow" id="right-up">
+            </div>
+            <div class="button_row">
+                <img src="../static/img/arrow-left-square.svg" alt="Беды с картинкой" class="arrow " id="left">
+                <img src="../static/img/app.svg" alt="Беды с картинкой" class="not_a_btn" id="null">
+                <img src="../static/img/arrow-right-square.svg" alt="Беды с картинкой" class="arrow" id="right">
+            </div>
+            <div class="button_row">
+                <img src="../static/img/arrow-down-left-square.svg" alt="Беды с картинкой" class="arrow " id="down-left">
+                <img src="../static/img/arrow-down-square.svg" alt="Беды с картинкой" class="arrow" id="down">
+                <img src="../static/img/arrow-down-right-square.svg" alt="Беды с картинкой" class="arrow" id="down-right">
+            </div>
+            <div style="margin-top: 75px;">
+                <img src="../static/img/zoom-in.svg" alt="Беды с картинкой" class="zoom_key" id="plus">
+                <img src="../static/img/zoom-out.svg" alt="Беды с картинкой" class="zoom_key" id="minus">
+            </div>
+            <div style="margin-top:  39px;">
+                <img src="../static/img/arrow-counterclockwise.svg" alt="Беды с картинкой" class="time_travel_key" id="step_back">
+            </div>
         </div>
-        <div class="button_row">
-            <img src="../static/img/arrow-left-square.svg" alt="Беды с картинкой" class="arrow " id="left">
-            <img src="../static/img/app.svg" alt="Беды с картинкой" class="not_a_btn" id="null">
-            <img src="../static/img/arrow-right-square.svg" alt="Беды с картинкой" class="arrow" id="right">
-        </div>
-        <div class="button_row">
-            <img src="../static/img/arrow-down-left-square.svg" alt="Беды с картинкой" class="arrow " id="down-left">
-            <img src="../static/img/arrow-down-square.svg" alt="Беды с картинкой" class="arrow" id="down">
-            <img src="../static/img/arrow-down-right-square.svg" alt="Беды с картинкой" class="arrow" id="down-right">
-        </div>
-        <div style="margin-top: 75px;">
-            <img src="../static/img/zoom-in.svg" alt="Беды с картинкой" class="zoom_key" id="plus">
-            <img src="../static/img/zoom-out.svg" alt="Беды с картинкой" class="zoom_key" id="minus">
-        </div>
-        <div style="margin-top:  39px;">
-            <img src="../static/img/arrow-counterclockwise.svg" alt="Беды с картинкой" class="time_travel_key" id="step_back">
-        </div>
+        <form method="post" class="map_form">
+            <input type="text" class="form-control" placeholder="Name your path" name="path_name">
+            <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save</button>
+        </form>
     </div>
-    <form method="post" class="map_form">
-        <input type="text" class="form-control" placeholder="Name your path" name="path_name">
-        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save</button>
-    </form>
     {% else %}
     <h2>You must be logged in to be able to create paths</h2>
     {% endif %}
