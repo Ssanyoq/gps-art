@@ -38,7 +38,7 @@ Gps art, изначально, — интересное использовани
 (на Windows это делается командой `pip install -r requirements.txt`, а на 
 Linux `pip3 install -r requirements.txt`)
 
-###3. Запустить `main.py`
+### 3. Запустить `main.py`
 
 ### Готово!
 
