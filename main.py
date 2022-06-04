@@ -20,25 +20,9 @@ users_maps = {"admin": Map()}
 class RegisterForm(Form):
     username = StringField('Username',
                            [validators.Length(min=3, max=15), validators.DataRequired()])
-    try:
-        email = StringField('Email',
-                            [validators.Length(min=6, max=50), validators.Email(),
-                             validators.DataRequired()])
-    except Exception:
-        raise Exception("\nПроблемы с email валидатором! строчка 28")
-        # Для решения проблемы надо удалить эти 3 строчки и раскомментить последующие
-    # except Exception:
-    #     email = StringField('Email',
-    #                         [validators.Length(min=6, max=50),
-    #                          validators.DataRequired()])
-    #     print("!!! Email validator отключен (строчка 31) !!!")
-    #     # Почему-то не у всех при установке wtforms работает
-    #     # Email валидатор. Я смотрел решения этой проблемы на всяких там StackOverflow,
-    #     # но решений не нашлось
-    #     # (это не программа плохая, а wtforms)
-
-    # Можно было, конечно, просто без предупредительных предупреждений отрубить email валидатор,
-    # но тогда есть шанс того, что кто-то из проверяющих пожалуется (плохо)
+    email = StringField('Email',
+                        [validators.Length(min=6, max=50), validators.Email(),
+                         validators.DataRequired()])
 
     password = PasswordField('Password', [
         validators.DataRequired(),
