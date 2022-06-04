@@ -31,7 +31,7 @@ class Map:
         if data_string is not None:
             self.get_data_from_string(data_string)
 
-    def change_size(self, new_size) -> None:
+    def change_size(self, new_size: (int, int)) -> None:
         """
         Просто изменяет размер карты
         :param new_size: картеж в формата (размер_x, размер_y); x <= 650, y <= 450
@@ -45,7 +45,7 @@ class Map:
         self.size = new_size
         self.params["size"] = f"{self.size[0]},{self.size[1]}"
 
-    def change_layer(self, new_layer) -> None:
+    def change_layer(self, new_layer: str) -> None:
         """
         Изменяет слой карты
         :param new_layer: слой карты, снимок которого будет возвращаться
@@ -105,7 +105,7 @@ class Map:
             else:
                 self.params["pl"] += f",{pt[0]},{pt[1]}"
 
-    def place_point(self, x, y) -> None:
+    def place_point(self, x: int, y: int) -> None:
         """
         Ставит точку на карте, соответствующую x и y. Не ставит ничего,
         если уровень масштабирования меньше 7 (слишком большой масштаб)
@@ -143,7 +143,7 @@ class Map:
         self.pts.append(point_ll)
         self.make_pts_param()
 
-    def change_z(self, z) -> None:
+    def change_z(self, z: int) -> None:
         """
         Меняет значение z
         :param z: новое значение z
@@ -160,7 +160,7 @@ class Map:
         self.spn = 180 / 2 ** self.z
         return True
 
-    def move(self, direction) -> None:
+    def move(self, direction: str) -> None:
         """
         Изменяет центр карты на 1/2 self.spn
         :param direction: равно "up","down","left" или "right"
@@ -206,7 +206,7 @@ class Map:
             string += f'{key}:{self.params[key]};'
         return string
 
-    def get_data_from_string(self, string) -> None:
+    def get_data_from_string(self, string: str) -> None:
         """
         Получает данные из строки, созданной методом
         get_data_string()
@@ -234,5 +234,5 @@ class Map:
         elif "pt" in self.params.keys():
             new_pt = self.params["pt"].split("~")
             self.pts = [[float(i.split(",")[0]), float(i.split(",")[1])] for i in new_pt]
-        print(f"pts:{self.pts}\nl:{self.layer}\nz:{self.z}\nll:{self.ll}\nspn:{self.spn}")
-        print(f"params:{self.params}")
+        # print(f"pts:{self.pts}\nl:{self.layer}\nz:{self.z}\nll:{self.ll}\nspn:{self.spn}")
+        # print(f"params:{self.params}") # for debug
